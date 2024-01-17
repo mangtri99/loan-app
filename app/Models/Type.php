@@ -10,6 +10,7 @@ class Type extends Model
     use HasFactory;
 
     const WEEKLY = 1;
+    const MONTHLY = 2;
 
     protected $fillable = [
         'name',

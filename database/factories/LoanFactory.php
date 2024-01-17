@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use App\Models\Status;
 use App\Models\Type;
 use App\Models\User;
@@ -21,11 +22,11 @@ class LoanFactory extends Factory
     {
         $amount = fake()->numberBetween(1000, 10000);
         // get random user id from users table
-        $userId = User::inRandomOrder()->first()->id;
+        $userId = User::where('role_id', '!=', Role::ADMIN)->inRandomOrder()->first()->id;
         return [
             'amount' => $amount,
             'term' => fake()->numberBetween(1, 12),
-            'balance' => 0,
+            'balance' => $amount,
             'type_id' => Type::WEEKLY,
             'status_id' => Status::PENDING,
             'user_id' => $userId,

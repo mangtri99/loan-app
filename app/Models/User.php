@@ -44,4 +44,14 @@ class User extends Authenticatable
         'password' => 'hashed',
         'role_id' => 'integer',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function loan()
+    {
+        return $this->hasMany(Loan::class);
+    }
 }

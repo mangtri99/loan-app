@@ -23,4 +23,14 @@ class Repayment extends Model
         'due_date' => 'date',
         'paid_date' => 'date',
     ];
+
+    public function loan()
+    {
+        return $this->belongsTo(Loan::class);
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
 }

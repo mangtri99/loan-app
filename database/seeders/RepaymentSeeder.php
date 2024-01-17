@@ -26,8 +26,9 @@ class RepaymentSeeder extends Seeder
                 // loan amount / term
                 // e.g. 1000 / 3 = 333.33
                 $amount = $loan->amount / $term;
-                // fix to 2 decimal places
-                $amount = (float) number_format($amount, 2);
+
+                // format to 2 decimal places
+                $amount = number_format((float) $amount, 2, '.', '');
 
                 // if last term, add the remainder
                 // e.g. 333.33 + 333.33 + 333.34 = 1000
