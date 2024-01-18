@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('type_id')->constrained();
             $table->float('amount');
             $table->tinyInteger('term');
-            $table->float('balance')->default(0);
             $table->timestamps();
         });
     }

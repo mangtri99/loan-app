@@ -14,7 +14,6 @@ class Loan extends Model
     protected $fillable = [
         'amount',
         'term',
-        'balance',
         'type_id',
         'status_id',
         'user_id',
@@ -23,7 +22,6 @@ class Loan extends Model
     protected $casts = [
         'amount' => 'float',
         'term' => 'integer',
-        'balance' => 'float',
         'type_id' => 'integer',
         'status_id' => 'integer',
         'user_id' => 'integer',

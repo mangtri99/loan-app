@@ -61,7 +61,6 @@ class LoanController extends Controller
 
             $data['user_id'] = auth()->user()->id;
             $data['status_id'] = Status::PENDING;
-            $data['balance'] = $data['amount'];
             $loan = Loan::create($data);
 
             // create repayments based on term
@@ -159,8 +158,10 @@ class LoanController extends Controller
     public function update(Request $request, string $id)
     {
         try {
+            // update repayment status to paid
             $repayment = Repayment::findOrFail($id);
             $repayment->status_id = Status::PAID;
+            $repayment->paid_date = now();
             $repayment->save();
 
             // if all repayments are paid, update loan status to paid

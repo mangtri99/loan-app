@@ -39,10 +39,16 @@ export const columns: ColumnDef<Loan>[] = [
     {
         header: "Remaining Debt",
         cell({row}) {
-            return row.original.balance.toLocaleString("en-US", {
+            const remainingRepayment = row.original.repayments.filter((repayment) => {
+                return repayment.status_id === PENDING
+            })
+            const remainingDebt = remainingRepayment.reduce((acc, repayment) => {
+                return acc + repayment.amount
+            }, 0)
+            return remainingDebt.toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
-            })
+            });
         },
     },
     {

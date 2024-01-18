@@ -35,7 +35,6 @@ export interface Loan {
     type_id: number
     amount: number
     term: number
-    balance: number
     created_at: string
     updated_at: string
     status: Status

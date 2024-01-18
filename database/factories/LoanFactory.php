@@ -26,7 +26,6 @@ class LoanFactory extends Factory
         return [
             'amount' => $amount,
             'term' => fake()->numberBetween(1, 12),
-            'balance' => $amount,
             'type_id' => Type::WEEKLY,
             'status_id' => Status::PENDING,
             'user_id' => $userId,
