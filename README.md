@@ -36,6 +36,11 @@ php artisan serve
 npm run dev
 ```
 
+For Testing
+```bash
+php artisan test
+```
+
 Access application : http://localhost:8000/
 
 Demo Account:

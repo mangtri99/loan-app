@@ -174,8 +174,10 @@ class LoanController extends Controller
                 $loan->save();
             }
 
+            return response()->json([]);
+
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Loan failed to update');
+            return redirect()->back()->with('error', 'Repayment ');
         }
     }
 
