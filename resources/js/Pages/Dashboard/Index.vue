@@ -1,16 +1,33 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 import { DataTable } from "@/Components/ui/datatable";
 import { columns } from "./States/column";
-import { Loan } from "@/types/types";
+import { Loan, Status } from "@/types/types";
 import { Button } from "@/components/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select";
+import { Label } from "@/Components/ui/label";
 
 interface Props {
     loans: Loan[];
+    statuses: Status[];
+    query?: any;
 }
 
-defineProps<Props>();
+const {loans, statuses, query} = defineProps<Props>();
+
+const form = useForm({
+    // sync with query string
+    status_id: query.status_id ? query.status_id : "",
+});
+
 </script>
 
 <template>
@@ -35,6 +52,29 @@ defineProps<Props>();
                 <div
                     class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6"
                 >
+                    <div class="flex justify-end mb-4">
+                        <div class="space-y-2">
+                            <Label for="repayment">Status</Label>
+                            <Select id="repayment" v-model:model-value="form.status_id" @update:model-value="form.get(route('dashboard'))">
+                                <SelectTrigger class="w-[180px]">
+                                    <SelectValue
+                                        placeholder="Filter by status"
+                                    />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectItem
+                                            v-for="(type, index) in statuses"
+                                            :key="type.id"
+                                            :value="String(type.id)"
+                                        >
+                                            {{ type.name }}
+                                        </SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
                     <DataTable :columns="columns" :data="loans" />
                 </div>
             </div>

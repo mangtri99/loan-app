@@ -17,9 +17,13 @@ class LoanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): \Inertia\Response
+    public function index(Request $request): \Inertia\Response
     {
         $loans = Loan::with(['user', 'repayments.status', 'status', 'type']);
+
+        if($request->has('status_id')) {
+            $loans = $loans->where('status_id', $request->status_id);
+        }
 
         if(auth()->user()->role_id == Role::CUSTOMER) {
             $loans = $loans->where('user_id', auth()->user()->id)->get();
@@ -28,6 +32,8 @@ class LoanController extends Controller
         }
         return Inertia::render('Dashboard/Index', [
             'loans' => $loans,
+            'statuses' => Status::all(),
+            'query' => $request->query(),
         ]);
     }
 
