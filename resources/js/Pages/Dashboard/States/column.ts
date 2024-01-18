@@ -1,11 +1,11 @@
 import { Loan } from "@/types/types";
 import type { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button"
 import { Link } from "@inertiajs/vue3";
 import { APPROVED, PENDING } from "@/constant";
 import dayjs from "dayjs";
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@/Components/ui/badge'
 
 export const columns: ColumnDef<Loan>[] = [
     {

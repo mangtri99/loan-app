@@ -2,10 +2,8 @@ import { Repayment } from "@/types/types";
 import type { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
 import { ADMIN, PAID, PENDING } from "@/constant";
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@/Components/ui/badge'
 import dayjs from "dayjs";
-import { Button } from "@/Components/ui/button";
-import { Link } from "@inertiajs/vue3";
 import BtnAction from "../Components/BtnAction.vue";
 
 export const columns: ColumnDef<Repayment>[] = [

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm } from "@inertiajs/vue3";
-import { Button } from "@/Components/ui/button";
-import { useToast } from "@/components/ui/toast/use-toast";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/Components/ui/toast/use-toast";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,7 +10,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@/Components/ui/alert-dialog";
 import { ref } from "vue";
 import { CUSTOMER } from "@/constant";
 

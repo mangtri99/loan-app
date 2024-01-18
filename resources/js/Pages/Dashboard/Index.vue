@@ -4,7 +4,7 @@ import { Head, Link } from "@inertiajs/vue3";
 import { DataTable } from "@/Components/ui/datatable";
 import { columns } from "./States/column";
 import { Loan } from "@/types/types";
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 
 interface Props {
     loans: Loan[];

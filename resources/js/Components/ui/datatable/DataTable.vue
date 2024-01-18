@@ -13,7 +13,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
+} from "@/Components/ui/table"
 
 const props = defineProps<{
     columns: ColumnDef<TData, TValue>[]

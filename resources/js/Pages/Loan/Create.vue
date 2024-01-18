@@ -5,7 +5,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Status, Type } from "@/types/types";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
     Select,
     SelectContent,
@@ -14,8 +14,7 @@ import {
     SelectLabel,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
-import { ref } from "vue";
+} from "@/Components/ui/select";
 import InputError from "@/Components/InputError.vue";
 
 interface Props {

@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import { computed } from "vue";
 import { columns } from "./States/column";
 import { DataTable } from "@/Components/ui/datatable";
-import { useToast } from "@/components/ui/toast/use-toast";
+import { useToast } from "@/Components/ui/toast/use-toast";
 import { Button } from "@/components/ui/button";
 import {
     AlertDialog,
@@ -18,9 +18,9 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@/Components/ui/alert-dialog";
 import { ref } from "vue";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/Components/ui/badge";
 
 interface Props {
     loan: Loan;
