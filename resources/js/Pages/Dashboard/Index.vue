@@ -28,6 +28,11 @@ const form = useForm({
     status_id: query.status_id ? query.status_id : "",
 });
 
+function reset() {
+    form.status_id = undefined;
+    form.get(route("dashboard"));
+}
+
 </script>
 
 <template>
@@ -52,7 +57,7 @@ const form = useForm({
                 <div
                     class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6"
                 >
-                    <div class="flex justify-end mb-4">
+                    <div class="flex justify-end items-end mb-4 space-x-4">
                         <div class="space-y-2">
                             <Label for="repayment">Status</Label>
                             <Select id="repayment" v-model:model-value="form.status_id" @update:model-value="form.get(route('dashboard'))">
@@ -73,6 +78,9 @@ const form = useForm({
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
+                        </div>
+                        <div class="space-y-2">
+                            <Button variant="destructive" @click="reset">Reset</Button>
                         </div>
                     </div>
                     <DataTable :columns="columns" :data="loans" />
