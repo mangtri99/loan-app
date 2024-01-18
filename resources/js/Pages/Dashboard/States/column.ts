@@ -3,8 +3,9 @@ import type { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
 import { Button } from "@/Components/ui/button";
 import { Link } from "@inertiajs/vue3";
-import { PENDING } from "@/constant";
+import { APPROVED, PENDING } from "@/constant";
 import dayjs from "dayjs";
+import { Badge } from '@/components/ui/badge'
 
 export const columns: ColumnDef<Loan>[] = [
     {
@@ -50,7 +51,11 @@ export const columns: ColumnDef<Loan>[] = [
             const nextRepayment = row.original.repayments.filter((repayment) => {
                 return repayment.status_id === PENDING
             })
-            return dayjs(nextRepayment[0].due_date).format("DD/MM/YYYY")
+            if(nextRepayment.length > 0){
+                return dayjs(nextRepayment[0].due_date).format("DD/MM/YYYY")
+            } else {
+                return "Done"
+            }
         },
     },
     {
@@ -63,8 +68,13 @@ export const columns: ColumnDef<Loan>[] = [
     {
         accessorKey: "status.name",
         header: "Status",
-        cell(props) {
-            return props.row.original.status.name;
+        cell({row}) {
+            return h(
+                Badge, {
+                    class: row.original.status_id === PENDING ? 'bg-red-500 hover:bg-red-500' : row.original.status_id === APPROVED ? 'bg-yellow-500 hover:bg-yellow-500' : 'bg-green-500 hover:bg-green-500'
+                },
+                row.original.status.name
+            );
         },
     },
     {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoanRequest;
 use App\Models\Loan;
+use App\Models\Repayment;
 use App\Models\Role;
 use App\Models\Status;
 use App\Models\Type;
@@ -115,7 +116,30 @@ class LoanController extends Controller
      */
     public function show(string $id)
     {
-        $loan = Loan::with(['user', 'repayments.status', 'status', 'type'])->findOrFail($id);
+        $loan = Loan::with(['user', 'repayments.status', 'repayments.loan', 'status', 'type'])->findOrFail($id);
+
+        $loan->repayments = $loan->repayments->map(function ($repayment, $key) use ($loan) {
+            $repayment->disabled = true;
+            return $repayment;
+        });
+        $repayments = $loan->repayments;
+
+        // if loan status approve, and first repayment status is pending, enable first repayment
+        if($loan->status_id == Status::APPROVED && $repayments->first()->status_id == Status::PENDING) {
+            $repayments->first()->disabled = false;
+        }
+
+        // if second repayment is paid, enable third repayment, and so on
+        foreach ($repayments as $key => $repayment) {
+            if($key > 0) {
+                if($repayments[$key - 1]->status_id == Status::PAID) {
+                    $repayment->disabled = false;
+                }
+            }
+        }
+
+        $loan->repayments = $repayments;
+
         return Inertia::render('Loan/Show', [
             'loan' => $loan,
         ]);
@@ -135,15 +159,20 @@ class LoanController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $loan = Loan::findOrFail($id);
+            $repayment = Repayment::findOrFail($id);
+            $repayment->status_id = Status::PAID;
+            $repayment->save();
 
-            if($loan->balance == 0) {
-                return redirect()->back()->with('error', 'Loan is already fully paid');
+            // if all repayments are paid, update loan status to paid
+            $loan = Loan::with('repayments')->findOrFail($repayment->loan_id);
+            // count all paid repayments
+            $repayments = $loan->repayments->where('status_id', Status::PAID);
+            // if count of paid repayments is equal to total repayments, update loan status to paid
+            if($repayments->count() == $loan->repayments->count()) {
+                $loan->status_id = Status::PAID;
+                $loan->save();
             }
 
-            $this->validate($request, [
-                'amount' => 'required|numeric|min:100000|max:100000000',
-            ]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Loan failed to update');
         }
@@ -152,18 +181,12 @@ class LoanController extends Controller
     public function approve(string $id)
     {
         try {
-            DB::beginTransaction();
             $loan = Loan::findOrFail($id);
             $loan->status_id = Status::APPROVED;
             $loan->save();
 
-            // also approve all repayments
-            $loan->repayments()->update(['status_id' => Status::APPROVED]);
-            DB::commit();
-
             return redirect()->route('dashboard')->with('success', 'Loan approved successfully');
         } catch (\Exception $e) {
-            DB::rollBack();
             return redirect()->back()->with('error', 'Loan failed to approve');
         }
     }

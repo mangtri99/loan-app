@@ -1,10 +1,12 @@
 import { Repayment } from "@/types/types";
 import type { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
+import { ADMIN, PAID, PENDING } from "@/constant";
+import { Badge } from '@/components/ui/badge'
+import dayjs from "dayjs";
 import { Button } from "@/Components/ui/button";
 import { Link } from "@inertiajs/vue3";
-import { PENDING } from "@/constant";
-import dayjs from "dayjs";
+import BtnAction from "../Components/BtnAction.vue";
 
 export const columns: ColumnDef<Repayment>[] = [
     {
@@ -13,7 +15,7 @@ export const columns: ColumnDef<Repayment>[] = [
     },
     {
         accessorKey: "amount",
-        header: "Loan",
+        header: "Repayment",
         cell(props) {
             return props.row.original.amount.toLocaleString("en-US", {
                 style: "currency",
@@ -32,8 +34,14 @@ export const columns: ColumnDef<Repayment>[] = [
     {
         accessorKey: "status.name",
         header: "Status",
-        cell(props) {
-            return props.row.original.status.name;
+        cell({row}) {
+            // return props.row.original.status.name;
+            return h(
+                Badge, {
+                    class: row.original.status_id === PENDING ? 'bg-red-500' : 'bg-green-500'
+                },
+                row.original.status.name
+            );
         },
     },
     {
@@ -48,18 +56,24 @@ export const columns: ColumnDef<Repayment>[] = [
             }
         },
     },
-    // {
-    //     id: "actions",
-    //     enableHiding: false,
-    //     cell: ({ row }) => {
-    //         const id = row.original.id;
-    //         return h(
-    //             Button,
-    //             {
-    //                 asChild: true,
-    //             },
-    //             h(Link, { href: route("loan.show", id), target: '_blank' }, "View")
-    //         );
-    //     },
-    // },
+    {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => {
+            const id = row.original.id;
+            return h(
+                BtnAction,
+                {
+                    id: id,
+                    data: row.original,
+                    // @ts-ignore
+                    disabled: row.original.disabled || row.original.status_id === PAID ? true : false,
+                    show: row.original.loan.status_id === PAID ?  false : true,
+                },
+                 "Pay"
+            );
+        },
+        size: 100,
+        maxSize: 100,
+    },
 ];

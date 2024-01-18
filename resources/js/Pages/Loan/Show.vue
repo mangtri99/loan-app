@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Label } from "@/Components/ui/label";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { PAID, PENDING, CUSTOMER, ADMIN } from "@/constant";
+import { PAID, PENDING, CUSTOMER, ADMIN, APPROVED } from "@/constant";
 import { Loan } from "@/types/types";
-import { Head } from "@inertiajs/vue3";
+import { Head, useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import { computed } from "vue";
 import { columns } from "./States/column";
@@ -15,13 +15,12 @@ import {
     AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
-    AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ref } from "vue";
+import { Badge } from "@/components/ui/badge";
 
 interface Props {
     loan: Loan;
@@ -30,6 +29,7 @@ interface Props {
 const { loan } = defineProps<Props>();
 const { toast } = useToast();
 const open = ref(false);
+const form = useForm({});
 
 const remainingTerm = computed(() => {
     const repayment = loan.repayments.filter(
@@ -46,25 +46,17 @@ const remainingCredit = computed(() => {
     return credit;
 });
 
-const latestPaidDate = computed(() => {
+const nextPaymentDate = computed(() => {
     const repayment = loan.repayments.filter(
-        (repayment) => repayment.status_id === PAID
+        (repayment) => repayment.status_id === PENDING
     );
 
-    // get the latest paid date
-    const latestPaid = repayment.reduce((acc, cur) => {
-        if (acc < cur.created_at) {
-            return cur.created_at;
-        } else {
-            return acc;
-        }
-    }, "");
-
-    if (latestPaid) {
-        return dayjs(latestPaid).format("MMMM DD, YYYY");
+    if(repayment.length > 0) {
+        return dayjs(repayment[0].due_date).format("MMMM DD, YYYY");
     } else {
-        return "No payment yet";
+        return "All paid";
     }
+
 });
 
 function confirmApprove() {
@@ -72,11 +64,24 @@ function confirmApprove() {
 }
 
 function approve() {
-    toast({
-        title: "Scheduled: Catch up",
-        description: "Friday, February 10, 2023 at 5:57 PM",
+    form.post(route("loan.approve", loan.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            toast({
+                title: "Loan Approved",
+                description: "You have successfully approved this loan"
+            });
+            open.value = false;
+        },
+        onError: () => {
+            toast({
+                title: "Something went wrong",
+                description: "Please try again later",
+            });
+            open.value = false;
+        },
     });
-    open.value = false;
+
 }
 </script>
 
@@ -98,7 +103,7 @@ function approve() {
                     class="flex justify-end mb-6"
                     v-if="$page.props.auth.user.role_id === ADMIN && loan.status_id === PENDING"
                 >
-                    <Button variant="destructive" @click="() => {}">
+                    <Button variant="destructive" @click="confirmApprove">
                         Approve
                     </Button>
                 </div>
@@ -107,10 +112,7 @@ function approve() {
                 >
                     <div class="flex items-center mb-4">
                             <p class="font-medium">
-                                Customer Name :
-                                {{
-                                    loan.user.name
-                                }}
+                                Customer Name : {{ loan.user.name }}
                             </p>
                         </div>
                     <div
@@ -129,11 +131,24 @@ function approve() {
                         </div>
                         <div class="space-y-2">
                             <Label>Status</Label>
-                            <p class="font-medium">{{ loan.status.name }}</p>
+                            <Badge :class="{
+                                    'bg-red-500 hover:bg-red-500': loan.status_id === PENDING,
+                                    'bg-green-500 hover:bg-green-500': loan.status_id === PAID,
+                                    'bg-yellow-500 hover:bg-yellow-500': loan.status_id === APPROVED
+
+                            }">
+                                {{
+                                    loan.status.name
+                                }}
+                            </Badge>
                         </div>
                         <div class="space-y-2">
                             <Label>Loan Type</Label>
-                            <p class="font-medium">{{ loan.type.name }}</p>
+                            <p class="font-medium">
+                                <Badge class="bg-blue-500 hover:bg-bl">
+                                    {{ loan.type.name }}
+                                </Badge>
+                            </p>
                         </div>
                         <div class="space-y-2">
                             <Label>Remaining Term</Label>
@@ -153,9 +168,9 @@ function approve() {
                             </p>
                         </div>
                         <div class="space-y-2">
-                            <Label>Latest Payment</Label>
+                            <Label>Next Payment</Label>
                             <p class="font-medium">
-                                {{ latestPaidDate }}
+                                {{ nextPaymentDate }}
                             </p>
                         </div>
                     </div>
@@ -169,7 +184,7 @@ function approve() {
                 </div>
             </div>
         </div>
-        <AlertDialog>
+        <AlertDialog :open="open">
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle
@@ -186,7 +201,7 @@ function approve() {
                     <AlertDialogCancel @click="open = false"
                         >Cancel</AlertDialogCancel
                     >
-                    <AlertDialogAction @click="confirmApprove"
+                    <AlertDialogAction @click="approve"
                         >Approve</AlertDialogAction
                     >
                 </AlertDialogFooter>

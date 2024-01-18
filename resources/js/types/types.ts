@@ -26,6 +26,7 @@ export interface Repayment {
     created_at: string
     updated_at: string
     status: Status
+    loan: Loan
 }
 
 export interface Loan {

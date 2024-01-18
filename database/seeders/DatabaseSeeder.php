@@ -23,10 +23,19 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::factory()->create(
             [
                 'name' => 'Administrator',
-                'email' => 'admin@admin.com',
+                'email' => 'admin@mail.com',
                 'role_id' => Role::ADMIN
             ]
         );
+
+        \App\Models\User::factory()->create(
+            [
+                'name' => 'Customer',
+                'email' => 'customer@mail.com',
+                'role_id' => Role::CUSTOMER
+            ]
+        );
+
         \App\Models\User::factory(10)->create();
 
         $this->call([

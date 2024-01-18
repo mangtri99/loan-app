@@ -36,37 +36,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/loan/create', [App\Http\Controllers\LoanController::class, 'create'])->name('loan.create');
     // Route::get('/loan/{id}/edit', [App\Http\Controllers\LoanController::class, 'edit'])->name('loan.edit');
     Route::post('/loan', [App\Http\Controllers\LoanController::class, 'store'])->name('loan.store')->middleware([HandlePrecognitiveRequests::class]);
-    Route::patch('/loan', [App\Http\Controllers\LoanController::class, 'update'])->name('loan.update')->middleware([HandlePrecognitiveRequests::class]);
+    Route::patch('/loan/{id}', [App\Http\Controllers\LoanController::class, 'update'])->name('loan.update');
+    Route::post('/loan/{id}/approve', [App\Http\Controllers\LoanController::class, 'approve'])->name('loan.approve')->middleware([HandlePrecognitiveRequests::class]);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/simulate', function(){
-    $loan = 9674;
-    $term = 3;
-    $repayments = [];
-    // create repayment for each loan
-    for($i = 1; $i <= $term; $i++) {
-        // loan amount / term
-        // e.g. 1000 / 3 = 333.33
-        $amount = $loan / $term;
-        // dd($amount);
-        // fix to 2 decimal places
-        $amount = number_format((float) $amount, 2, '.', '');
-
-        // if last term, add the remainder
-        // e.g. 333.33 + 333.33 + 333.34 = 1000
-        if($i == $term) {
-            $amount = $amount + ($loan - ($amount * $term));
-        }
-
-        $repayments[] = [
-            'amount' => (float) $amount,
-        ];
-    }
-    dd($repayments);
-});
 
 require __DIR__.'/auth.php';

@@ -33,7 +33,7 @@ defineProps<Props>();
                     </Button>
                 </div>
                 <div
-                    class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg"
+                    class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6"
                 >
                     <DataTable :columns="columns" :data="loans" />
                 </div>
